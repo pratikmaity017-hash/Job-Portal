@@ -2,6 +2,7 @@ const { Router } = require("express");
 const protectedRouter = require("../middlewares/auth.middleware");
 const authorizedRoles = require("../middlewares/role.middleware");
 const { updateProfile } = require("../controllers/user.controller");
+const uploadResume = require("../middlewares/multer.middleware");
 
 const router = Router();
 
@@ -17,6 +18,11 @@ router.get(
   },
 );
 
-router.patch("/profile/update", protectedRouter, updateProfile);
+router.patch(
+  "/profile/update",
+  protectedRouter,
+  uploadResume.single("resume"),
+  updateProfile,
+);
 
 module.exports = router;

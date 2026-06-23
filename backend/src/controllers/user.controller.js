@@ -1,4 +1,5 @@
 const userModel = require("../models/user.model");
+const imagekit = require("../config/imagekit");
 
 const updateProfile = async (req, res) => {
   try {
@@ -24,6 +25,17 @@ const updateProfile = async (req, res) => {
       user.profile.skills = skills.split(",").map((skill) => {
         return skill.trim();
       });
+    }
+
+    if (req.file) {
+      const uploadedFile = await imagekit.files.upload({
+        file: req.file.buffer.toString("base64"),
+        fileName: req.file.originalname,
+        folder: "/job-portal/resumes",
+      });
+
+      user.profile.resume = uploadedFile.url;
+      user.profile.resumeOriginalName = req.file.originalname;
     }
 
     await user.save();
